@@ -2,7 +2,6 @@
 members = [
 "contracts/class-type", 
 "contracts/nft-type", 
-"contracts/metadata",
 "tests"
 ]
 

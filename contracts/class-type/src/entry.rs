@@ -1,5 +1,3 @@
-// TODO: remove allow(unused) and remove unused deps
-#![allow(unused)]
 use alloc::vec::Vec;
 use ckb_std::{
     ckb_constants::Source,

@@ -17,7 +17,3 @@ template_type = "Rust"
 [[contracts]]
 name = "nft-type"
 template_type = "Rust"
-
-[[contracts]]
-name = "metadata"
-template_type = "Rust"

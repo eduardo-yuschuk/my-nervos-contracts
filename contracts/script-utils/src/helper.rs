@@ -1,5 +1,3 @@
-// TODO: remove allow(unused) and remove unused deps
-#![allow(unused)]
 use crate::class::CLASS_TYPE_ARGS_LEN;
 use crate::error::Error;
 //use crate::issuer::ISSUER_TYPE_ARGS_LEN;

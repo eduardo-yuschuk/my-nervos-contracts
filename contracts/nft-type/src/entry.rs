@@ -1,5 +1,3 @@
-// TODO: remove allow(unused) and remove unused deps
-#![allow(unused)]
 mod validator;
 use self::validator::validate_immutable_nft_fields;
 use alloc::vec::Vec;
