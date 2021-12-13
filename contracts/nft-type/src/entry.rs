@@ -6,33 +6,33 @@ use ckb_std::{
     ckb_constants::Source,
     ckb_types::{bytes::Bytes, packed::*, prelude::*},
     high_level::{
-        load_cell_data, load_cell_occupied_capacity, load_cell_type, load_input, load_script,
+        load_cell_data, load_cell_type, load_input, load_script,
         QueryIter,
     },
 };
 use core::result::Result;
 use script_utils::{
-    class::{Class, CLASS_TYPE_ARGS_LEN},
+    class::{CLASS_TYPE_ARGS_LEN},
     error::Error,
     helper::{
-        check_group_input_witness_is_none_with_type, count_cells_by_type, load_cell_data_by_type,
-        load_class_type, load_payment_cell_capacity, Action,
+        check_group_input_witness_is_none_with_type, count_cells_by_type,
+        load_payment_cell_capacity, Action,
     },
     // issuer::ISSUER_TYPE_ARGS_LEN,
     nft::{Nft, NFT_TYPE_ARGS_LEN},
 };
 
-fn parse_type_opt(type_opt: &Option<Script>, predicate: &dyn Fn(&Script) -> bool) -> bool {
-    match type_opt {
-        Some(type_) => predicate(type_),
-        None => false,
-    }
-}
+// fn parse_type_opt(type_opt: &Option<Script>, predicate: &dyn Fn(&Script) -> bool) -> bool {
+//     match type_opt {
+//         Some(type_) => predicate(type_),
+//         None => false,
+//     }
+// }
 
-fn check_class_type<'a>(nft_args: &'a Bytes) -> impl Fn(&Script) -> bool + 'a {
-    let class_type = load_class_type(nft_args);
-    move |type_: &Script| type_.as_slice() == class_type.as_slice()
-}
+// fn check_class_type<'a>(nft_args: &'a Bytes) -> impl Fn(&Script) -> bool + 'a {
+//     let class_type = load_class_type(nft_args);
+//     move |type_: &Script| type_.as_slice() == class_type.as_slice()
+// }
 
 fn check_nft_type<'a>(nft_type: &'a Script) -> impl Fn(&Script) -> bool + 'a {
     let nft_args: Bytes = nft_type.args().unpack();
@@ -58,19 +58,19 @@ fn get_cell_output_index_by_type(nft_type: &Script) -> Result<usize, Error> {
         .map_or(Err(Error::Encoding), |index| Ok(index))
 }
 
-fn get_cell_occupied_capacity_by_type(nft_type: &Script) -> u64 {
-    let index = QueryIter::new(load_cell_type, Source::Output)
-        .position(|type_opt| match type_opt {
-            Some(type_) => {
-                type_.code_hash().as_slice() == nft_type.code_hash().as_slice()
-                    && type_.hash_type().as_slice() == nft_type.hash_type().as_slice()
-                    && type_.args().as_slice() == nft_type.args().as_slice()
-            }
-            None => false,
-        })
-        .unwrap();
-    load_cell_occupied_capacity(index, Source::Output).unwrap()
-}
+// fn get_cell_occupied_capacity_by_type(nft_type: &Script) -> u64 {
+//     let index = QueryIter::new(load_cell_type, Source::Output)
+//         .position(|type_opt| match type_opt {
+//             Some(type_) => {
+//                 type_.code_hash().as_slice() == nft_type.code_hash().as_slice()
+//                     && type_.hash_type().as_slice() == nft_type.hash_type().as_slice()
+//                     && type_.args().as_slice() == nft_type.args().as_slice()
+//             }
+//             None => false,
+//         })
+//         .unwrap();
+//     load_cell_occupied_capacity(index, Source::Output).unwrap()
+// }
 
 // fn check_issuer_type<'a>(nft_type: &'a Script) -> impl Fn(&Script) -> bool + 'a {
 //     let nft_args: Bytes = nft_type.args().unpack();
@@ -129,8 +129,8 @@ fn handle_creation(nft_type: &Script) -> Result<(), Error> {
     //     .filter(|type_opt| parse_type_opt(&type_opt, &check_issuer_type(nft_type)));
 
     // TODO: re-implement total_cost calculation
-    let mut total_cost: u64 = 0;
-    let mut minted_nfts_total_occupied_capacity: u64 = 0;
+    let /*mut*/ total_cost: u64 = 0;
+    let /*mut*/ minted_nfts_total_occupied_capacity: u64 = 0;
     // for output_nft_type in output_nft_types {
     //     let nft_type_script = output_nft_type.unwrap();
     //     let nft_args: Bytes = nft_type_script.args().unpack();

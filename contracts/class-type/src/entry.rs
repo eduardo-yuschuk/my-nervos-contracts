@@ -9,8 +9,7 @@ use script_utils::{
     class::{Class, CLASS_TYPE_ARGS_LEN},
     error::Error,
     helper::{
-        check_group_input_witness_is_none_with_type, count_cells_by_type, count_cells_by_type_hash,
-        load_cell_data_by_type_hash, load_output_type_args_ids, Action,
+        check_group_input_witness_is_none_with_type, count_cells_by_type, Action,
     },
     //issuer::{Issuer, ISSUER_TYPE_ARGS_LEN},
 };
@@ -22,7 +21,7 @@ use script_utils::{
 // }
 
 fn check_class_type<'a>(class_type: &'a Script) -> impl Fn(&Script) -> bool + 'a {
-    let class_args: Bytes = class_type.args().unpack();
+    //let class_args: Bytes = class_type.args().unpack();
     move |type_: &Script| {
         let type_args: Bytes = type_.args().unpack();
         type_.code_hash().as_slice() == class_type.code_hash().as_slice()
@@ -51,8 +50,8 @@ fn parse_class_action(class_type: &Script) -> Result<Action, Error> {
     Err(Error::ClassCellsCountError)
 }
 
-fn handle_creation(class_type: &Script) -> Result<(), Error> {
-    let class_args: Bytes = class_type.args().unpack();
+fn handle_creation(_class_type: &Script) -> Result<(), Error> {
+    // let class_args: Bytes = class_type.args().unpack();
     // let issuer_inputs_count =
     //     count_cells_by_type_hash(Source::Input, &check_issuer_id(&class_args));
     // if issuer_inputs_count != 1 {
