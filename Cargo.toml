@@ -1,0 +1,14 @@
+[workspace]
+members = [
+"contracts/class-type", 
+"contracts/nft-type", 
+"contracts/metadata",
+"tests"
+]
+
+[profile.release]
+overflow-checks = true
+opt-level = 's'
+lto = true
+codegen-units = 1
+panic = 'abort'
