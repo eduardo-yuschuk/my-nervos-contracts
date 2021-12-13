@@ -1,4 +1,4 @@
-use crate::class::CLASS_TYPE_ARGS_LEN;
+use crate::collection::COLLECTION_TYPE_ARGS_LEN;
 use crate::error::Error;
 //use crate::issuer::ISSUER_TYPE_ARGS_LEN;
 use alloc::vec::Vec;
@@ -16,7 +16,7 @@ const ID_LEN: usize = 4;
 pub const DYN_MIN_LEN: usize = 2; // the length of dynamic data size(u16)
 
 const TYPE: u8 = 1;
-const CLASS_TYPE_CODE_HASH: [u8; 32] = [
+const COLLECTION_TYPE_CODE_HASH: [u8; 32] = [
     78, 8, 42, 115, 174, 100, 11, 46, 187, 192, 210, 204, 177, 131, 115, 254, 240, 240, 143, 58,
     171, 103, 241, 20, 16, 190, 248, 188, 64, 150, 75, 124,
 ];
@@ -54,10 +54,10 @@ fn parse_type_opt(type_opt: &Option<Script>, predicate: &dyn Fn(&Script) -> bool
     }
 }
 
-pub fn load_class_type(nft_args: &Bytes) -> Script {
+pub fn load_collection_type(nft_args: &Bytes) -> Script {
     Script::new_builder()
-        .code_hash(CLASS_TYPE_CODE_HASH.pack())
-        .args(nft_args[0..CLASS_TYPE_ARGS_LEN].pack())
+        .code_hash(COLLECTION_TYPE_CODE_HASH.pack())
+        .args(nft_args[0..COLLECTION_TYPE_ARGS_LEN].pack())
         .hash_type(Byte::new(TYPE))
         .build()
 }
@@ -133,22 +133,22 @@ pub fn load_output_type_args_ids(
 //     })
 // }
 
-fn cell_deps_have_same_class_type(class_type: &Script) -> Result<bool, Error> {
+fn cell_deps_have_same_collection_type(collection_type: &Script) -> Result<bool, Error> {
     let type_opt = load_cell_type(0, Source::CellDep)?;
     type_opt.map_or(Ok(false), |_type| {
-        Ok(_type.as_slice() == class_type.as_slice())
+        Ok(_type.as_slice() == collection_type.as_slice())
     })
 }
 
-pub fn cell_deps_and_inputs_have_issuer_or_class_lock(nft_args: &Bytes) -> Result<bool, Error> {
+pub fn cell_deps_and_inputs_have_issuer_or_collection_lock(nft_args: &Bytes) -> Result<bool, Error> {
     let cell_dep_lock = load_cell_lock(0, Source::CellDep)?;
     let input_lock = load_cell_lock(0, Source::Input)?;
     if cell_dep_lock.as_slice() == input_lock.as_slice() {
         // if cell_deps_have_same_issuer_id(&nft_args[0..ISSUER_TYPE_ARGS_LEN])? {
         //     return Ok(true);
         // }
-        let class_type = load_class_type(nft_args);
-        if cell_deps_have_same_class_type(&class_type)? {
+        let collection_type = load_collection_type(nft_args);
+        if cell_deps_have_same_collection_type(&collection_type)? {
             return Ok(true);
         }
     }

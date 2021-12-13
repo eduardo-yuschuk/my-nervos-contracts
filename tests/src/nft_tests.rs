@@ -11,7 +11,7 @@ use ckb_testtool::{builtin::ALWAYS_SUCCESS, context::Context};
 const MAX_CYCLES: u64 = 70_000_000;
 
 const TYPE: u8 = 1;
-const CLASS_TYPE_CODE_HASH: [u8; 32] = [
+const COLLECTION_TYPE_CODE_HASH: [u8; 32] = [
     78, 8, 42, 115, 174, 100, 11, 46, 187, 192, 210, 204, 177, 131, 115, 254, 240, 240, 143, 58,
     171, 103, 241, 20, 16, 190, 248, 188, 64, 150, 75, 124,
 ];
@@ -55,56 +55,56 @@ fn create_test_context() -> (Context, TransactionView) {
         .build_script(&issuer_out_point, Bytes::from(issuer_type_args.clone()))
         .expect("script");
 
-    // class type script and inputs
-    let class_input_data =
+    // collection type script and inputs
+    let collection_input_data =
         Bytes::from(hex::decode("0000000000000003E8000200000002000000020000").unwrap());
 
     let issuer_type_hash: [u8; 32] = issuer_type_script.clone().calc_script_hash().unpack();
-    let mut class_type_args = issuer_type_hash[0..20].to_vec();
-    let mut args_class_id = 8u32.to_be_bytes().to_vec();
-    class_type_args.append(&mut args_class_id);
+    let mut collection_type_args = issuer_type_hash[0..20].to_vec();
+    let mut args_collection_id = 8u32.to_be_bytes().to_vec();
+    collection_type_args.append(&mut args_collection_id);
 
-    let class_aggron_type_script = Script::new_builder()
-        .code_hash(CLASS_TYPE_CODE_HASH.pack())
-        .args(Bytes::copy_from_slice(&class_type_args[..]).pack())
+    let collection_aggron_type_script = Script::new_builder()
+        .code_hash(collection_TYPE_CODE_HASH.pack())
+        .args(Bytes::copy_from_slice(&collection_type_args[..]).pack())
         .hash_type(Byte::new(TYPE))
         .build();
-    let class_cell_dep_aggron_out_point = context.create_cell(
+    let collection_cell_dep_aggron_out_point = context.create_cell(
         CellOutput::new_builder()
             .capacity(2000u64.pack())
             .lock(lock_script.clone())
-            .type_(Some(class_aggron_type_script.clone()).pack())
+            .type_(Some(collection_aggron_type_script.clone()).pack())
             .build(),
-        class_input_data,
+        collection_input_data,
     );
-    let class_cell_aggron_dep = CellDep::new_builder()
-        .out_point(class_cell_dep_aggron_out_point.clone())
+    let collection_cell_aggron_dep = CellDep::new_builder()
+        .out_point(collection_cell_dep_aggron_out_point.clone())
         .build();
 
-    // another class type script and inputs
-    let class_input_data_2 =
+    // another collection type script and inputs
+    let collection_input_data_2 =
         Bytes::from(hex::decode("0000000000000001F4000200000002000000020000").unwrap());
 
     let issuer_type_hash: [u8; 32] = issuer_type_script.clone().calc_script_hash().unpack();
-    let mut class_type_args_2 = issuer_type_hash[0..20].to_vec();
-    let mut args_class_id_2 = 2u32.to_be_bytes().to_vec();
-    class_type_args_2.append(&mut args_class_id_2);
+    let mut collection_type_args_2 = issuer_type_hash[0..20].to_vec();
+    let mut args_collection_id_2 = 2u32.to_be_bytes().to_vec();
+    collection_type_args_2.append(&mut args_collection_id_2);
 
-    let class_aggron_type_script_2 = Script::new_builder()
-        .code_hash(CLASS_TYPE_CODE_HASH.pack())
-        .args(Bytes::copy_from_slice(&class_type_args_2[..]).pack())
+    let collection_aggron_type_script_2 = Script::new_builder()
+        .code_hash(collection_TYPE_CODE_HASH.pack())
+        .args(Bytes::copy_from_slice(&collection_type_args_2[..]).pack())
         .hash_type(Byte::new(TYPE))
         .build();
-    let class_cell_dep_aggron_out_point_2 = context.create_cell(
+    let collection_cell_dep_aggron_out_point_2 = context.create_cell(
         CellOutput::new_builder()
             .capacity(2000u64.pack())
             .lock(lock_script.clone())
-            .type_(Some(class_aggron_type_script_2.clone()).pack())
+            .type_(Some(collection_aggron_type_script_2.clone()).pack())
             .build(),
-        class_input_data_2,
+        collection_input_data_2,
     );
-    let class_cell_aggron_dep_2 = CellDep::new_builder()
-        .out_point(class_cell_dep_aggron_out_point_2.clone())
+    let collection_cell_aggron_dep_2 = CellDep::new_builder()
+        .out_point(collection_cell_dep_aggron_out_point_2.clone())
         .build();
 
     // funding cell
@@ -121,7 +121,7 @@ fn create_test_context() -> (Context, TransactionView) {
     let inputs = vec![normal_input.clone()];
 
     // nft type script and inputs
-    let mut nft_type_args = class_type_args.clone().to_vec();
+    let mut nft_type_args = collection_type_args.clone().to_vec();
 
     let first_input_previous_output = normal_input.previous_output();
     let mut blake2b = Blake2bBuilder::new(32).build();
@@ -138,8 +138,8 @@ fn create_test_context() -> (Context, TransactionView) {
         .build_script(&nft_out_point, Bytes::copy_from_slice(&nft_type_args[..]))
         .expect("script");
 
-    // another nft from same class
-    let mut nft_type_args_2 = class_type_args.clone().to_vec();
+    // another nft from same collection
+    let mut nft_type_args_2 = collection_type_args.clone().to_vec();
 
     let first_input_previous_output = normal_input.previous_output();
     let mut blake2b = Blake2bBuilder::new(32).build();
@@ -156,8 +156,8 @@ fn create_test_context() -> (Context, TransactionView) {
         .build_script(&nft_out_point, Bytes::copy_from_slice(&nft_type_args_2[..]))
         .expect("script");
 
-    // another nft from another class
-    let mut nft_type_args_3 = class_type_args_2.clone().to_vec();
+    // another nft from another collection
+    let mut nft_type_args_3 = collection_type_args_2.clone().to_vec();
 
     let first_input_previous_output = normal_input.previous_output();
     let mut blake2b = Blake2bBuilder::new(32).build();
@@ -216,8 +216,8 @@ fn create_test_context() -> (Context, TransactionView) {
 
     let cell_deps = vec![
         lock_script_dep,
-        class_cell_aggron_dep,
-        class_cell_aggron_dep_2,
+        collection_cell_aggron_dep,
+        collection_cell_aggron_dep_2,
         nft_type_script_dep,
     ];
 

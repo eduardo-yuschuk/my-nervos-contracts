@@ -12,7 +12,7 @@ use ckb_std::{
 };
 use core::result::Result;
 use script_utils::{
-    class::{CLASS_TYPE_ARGS_LEN},
+    collection::{COLLECTION_TYPE_ARGS_LEN},
     error::Error,
     helper::{
         check_group_input_witness_is_none_with_type, count_cells_by_type,
@@ -29,9 +29,9 @@ use script_utils::{
 //     }
 // }
 
-// fn check_class_type<'a>(nft_args: &'a Bytes) -> impl Fn(&Script) -> bool + 'a {
-//     let class_type = load_class_type(nft_args);
-//     move |type_: &Script| type_.as_slice() == class_type.as_slice()
+// fn check_collection_type<'a>(nft_args: &'a Bytes) -> impl Fn(&Script) -> bool + 'a {
+//     let collection_type = load_collection_type(nft_args);
+//     move |type_: &Script| type_.as_slice() == collection_type.as_slice()
 // }
 
 fn check_nft_type<'a>(nft_type: &'a Script) -> impl Fn(&Script) -> bool + 'a {
@@ -41,7 +41,7 @@ fn check_nft_type<'a>(nft_type: &'a Script) -> impl Fn(&Script) -> bool + 'a {
         type_.code_hash().as_slice() == nft_type.code_hash().as_slice()
             && type_.hash_type().as_slice() == nft_type.hash_type().as_slice()
             && type_args.len() == NFT_TYPE_ARGS_LEN
-            && type_args[0..CLASS_TYPE_ARGS_LEN] == nft_args[0..CLASS_TYPE_ARGS_LEN]
+            && type_args[0..COLLECTION_TYPE_ARGS_LEN] == nft_args[0..COLLECTION_TYPE_ARGS_LEN]
     }
 }
 
@@ -123,7 +123,7 @@ fn handle_creation(nft_type: &Script) -> Result<(), Error> {
         return Err(Error::TypeArgsInvalid);
     }
 
-    // TODO: re-implement class dependency verification
+    // TODO: re-implement collection dependency verification
     // // Get all nfts from issuer cell
     // let output_nft_types = QueryIter::new(load_cell_type, Source::Output)
     //     .filter(|type_opt| parse_type_opt(&type_opt, &check_issuer_type(nft_type)));
@@ -135,22 +135,22 @@ fn handle_creation(nft_type: &Script) -> Result<(), Error> {
     //     let nft_type_script = output_nft_type.unwrap();
     //     let nft_args: Bytes = nft_type_script.args().unpack();
 
-    //     // Check the class dependency exists for every output nft
-    //     let class_inputs_count = count_cells_by_type(Source::CellDep, &check_class_type(&nft_args));
-    //     if class_inputs_count != 1 {
-    //         return Err(Error::ClassCellsCountError);
+    //     // Check the collection dependency exists for every output nft
+    //     let collection_inputs_count = count_cells_by_type(Source::CellDep, &check_collection_type(&nft_args));
+    //     if collection_inputs_count != 1 {
+    //         return Err(Error::CollectionCellsCountError);
     //     }
 
-    //     // Load data from class cell
-    //     let load_class = |source| match load_cell_data_by_type(source, &check_class_type(&nft_args))
+    //     // Load data from collection cell
+    //     let load_collection = |source| match load_cell_data_by_type(source, &check_collection_type(&nft_args))
     //     {
-    //         Some(data) => Ok(Class::from_data(&data)?),
-    //         None => Err(Error::ClassDataInvalid),
+    //         Some(data) => Ok(Collection::from_data(&data)?),
+    //         None => Err(Error::CollectionDataInvalid),
     //     };
-    //     let class_data = load_class(Source::CellDep)?;
+    //     let collection_data = load_collection(Source::CellDep)?;
 
     //     // convert cost from CKB to Shannon
-    //     total_cost += class_data.cost * 100000000;
+    //     total_cost += collection_data.cost * 100000000;
     //     minted_nfts_total_occupied_capacity += get_cell_occupied_capacity_by_type(&nft_type_script);
     // }
 

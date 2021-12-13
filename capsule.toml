@@ -11,7 +11,7 @@ version = "0.7.0 56bf934"
 deployment = "deployment.toml"
 
 [[contracts]]
-name = "class-type"
+name = "collection-type"
 template_type = "Rust"
 
 [[contracts]]

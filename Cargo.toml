@@ -1,6 +1,6 @@
 [workspace]
 members = [
-"contracts/class-type", 
+"contracts/collection-type", 
 "contracts/nft-type", 
 "tests"
 ]
